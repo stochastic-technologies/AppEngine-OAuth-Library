@@ -145,12 +145,12 @@ class OAuthClient():
 
     # Create a HMAC-SHA1 signature of the message.
     key = "%s&%s" % (self.consumer_secret, secret) # Note compulsory "&".
-    signature = hmac(key, message, sha1)
-    digest_base64 = signature.digest().encode("base64").strip()
+    digest_base64 = hmac(key, message, sha1).digest().encode("base64")[:-1]
     params["oauth_signature"] = digest_base64
 
     # Construct and fetch the URL and return the result object.
-    url = "%s?%s" % (url, urlencode(params))
+    if method == urlfetch.GET:
+      url = "%s?%s" % (url, urlencode(params))
 
     headers = {"Authorization": "OAuth"} if protected else {}
     payload = urlencode(params) if method == urlfetch.POST else None
